@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { Message, User } = require('../models');
+const { Message, User, MessageReaction, Emoji } = require('../models');
 const path = require('path');
 const fs = require('fs');
 const { generateUniqueFilename } = require('../utils/fileOperationsHelper');
@@ -83,29 +83,39 @@ const getMessagesByGroupId = async (req, res) => {
     const { groupId } = req.params;
 
     try {
-        // Fetch messages for the group along with sender and receiver details
+
+        // Fetch messages for the group along with sender, receiver, and reply details
         // const messages = await Message.findAll({
         //     where: { group_id: groupId },
         //     include: [
         //         {
         //             model: User,
-        //             as: 'Sender', // Alias for sender details
-        //             attributes: ['id', 'name', 'email'], // Specify the fields to include
+        //             as: 'Sender',
+        //             attributes: ['id', 'name', 'email'],
         //         },
         //         {
         //             model: User,
-        //             as: 'Receiver', // Alias for receiver details (optional for private chats)
-        //             attributes: ['id', 'name', 'email'], // Specify the fields to include
+        //             as: 'Receiver',
+        //             attributes: ['id', 'name', 'email'],
         //         },
+        //         {
+        //             model: Message,
+        //             as: 'replyToMessage', // Alias for replied-to message
+        //             attributes: ['filename', 'content'], // Include necessary fields
+        //         }
         //     ],
-        //     order: [['createdAt', 'ASC']], // Sort messages by creation time
+        //     order: [['createdAt', 'ASC']],
         // });
 
         // if (!messages.length) {
         //     return res.status(404).json({ message: 'No messages found for this group' });
         // }
 
-        // Fetch messages for the group along with sender, receiver, and reply details
+
+        // return res.status(200).json({ messages });
+
+
+        // Fetch messages for the group along with sender, receiver, reply details, and reactions
         const messages = await Message.findAll({
             where: { group_id: groupId },
             include: [
@@ -123,7 +133,23 @@ const getMessagesByGroupId = async (req, res) => {
                     model: Message,
                     as: 'replyToMessage', // Alias for replied-to message
                     attributes: ['filename', 'content'], // Include necessary fields
-                }
+                },
+                {
+                    model: MessageReaction,
+                    as: 'reactions',
+                    include: [
+                        {
+                            model: User,
+                            as: 'user',
+                            attributes: ['id', 'name', 'email'],
+                        },
+                        {
+                            model: Emoji,
+                            as: 'emoji',
+                            attributes: ['id', 'unicode', 'imageUrl', 'description'],
+                        },
+                    ],
+                },
             ],
             order: [['createdAt', 'ASC']],
         });
@@ -132,8 +158,9 @@ const getMessagesByGroupId = async (req, res) => {
             return res.status(404).json({ message: 'No messages found for this group' });
         }
 
-
         return res.status(200).json({ messages });
+
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'Failed to fetch messages' });

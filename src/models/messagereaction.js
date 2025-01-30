@@ -9,17 +9,16 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+
     static associate(models) {
       // define association here
-      MessageReaction.associate = (models) => {
-        // A reaction belongs to one message
-        MessageReaction.belongsTo(models.Message, { foreignKey: 'message_id', as: "message" });
-        // A reaction belongs to one user
-        MessageReaction.belongsTo(models.User, { foreignKey: 'user_id', as: "user" });
-        // MessageReaction.belongsTo(models.User, { foreignKey: "user_id",  });
-        // MessageReaction.belongsTo(models.Message, { foreignKey: "message_id", });
-        MessageReaction.belongsTo(models.Emoji, { foreignKey: "emojiId", as: "emoji" });
-      };
+      // A reaction belongs to one message
+      MessageReaction.belongsTo(models.Message, { foreignKey: 'message_id', as: "message" });
+      // A reaction belongs to one user
+      MessageReaction.belongsTo(models.User, { foreignKey: 'user_id', as: "user" });
+      // MessageReaction.belongsTo(models.User, { foreignKey: "user_id",  });
+      // MessageReaction.belongsTo(models.Message, { foreignKey: "message_id", });
+      MessageReaction.belongsTo(models.Emoji, { foreignKey: "emojiId", as: "emoji" });
 
     }
   }

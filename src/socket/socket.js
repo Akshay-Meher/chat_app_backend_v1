@@ -143,6 +143,15 @@ const initializeSocket = (server) => {
             io.to(`group_${groupId}`).emit('groupMessage', messageToEmit);
         });
 
+        // handle Live EmogiReactions 
+        socket.on('emojiReaction', ({ msg, emoji }) => {
+            console.log("emoji", emoji);
+            console.log("msg", msg);
+            const { group_id } = msg;
+            socket.join(`group_${group_id}`);
+            io.to(`group_${group_id}`).emit('emojiReaction', { msg, emoji });
+        });
+
 
 
         socket.on('disconnect', () => {

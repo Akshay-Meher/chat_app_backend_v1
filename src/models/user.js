@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Group, { as: 'CreatedGroups', foreignKey: 'admin_id' });
 
       // A user can have many message reactions
-      User.hasMany(models.MessageReaction, { foreignKey: 'user_id' });
+      User.hasMany(models.MessageReaction, { foreignKey: 'user_id', as: 'reactions' });
       User.belongsToMany(models.Group, { through: 'GroupUsers', as: 'Groups', foreignKey: 'user_id' });
     }
   }

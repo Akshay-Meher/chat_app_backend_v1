@@ -14,7 +14,6 @@ router.post('/send', sendMessageValidation, checkValidationMidd, sendMessage);
 router.post('/uploadFiles', upload.array('files', 5), uploadFiles);
 router.get('/group/:groupId', getMessagesByGroupId);
 router.get('/user/:sender_id/:reciever_id', getMessagesByUser);
-router.post('/reaction/add', addReactionValidation, checkValidationMidd, addReaction);
-router.delete('/reaction/delete', addReactionValidation, checkValidationMidd, deleteReaction);
+
 
 module.exports = router;
